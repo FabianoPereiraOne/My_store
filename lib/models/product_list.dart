@@ -14,7 +14,7 @@ class ProductList with ChangeNotifier {
   List<Product> get favoriteItems =>
       _items.where((prod) => prod.isFavorite).toList();
 
-  void saveProduct(Map<String, Object> data) {
+  Future<bool> saveProduct(Map<String, Object> data) {
     bool hasId = data['id'] != null;
 
     final newProduct = Product(
@@ -26,22 +26,24 @@ class ProductList with ChangeNotifier {
     );
 
     if (hasId) {
-      updateProduct(newProduct);
+      return updateProduct(newProduct);
     } else {
-      addProduct(newProduct);
+      return addProduct(newProduct);
     }
   }
 
-  void updateProduct(Product product) {
+  Future<bool> updateProduct(Product product) {
     int index = _items.indexWhere((prod) => prod.id == product.id);
 
     if (index >= 0) {
       _items[index] = product;
       notifyListeners();
     }
+
+    return Future.value(true);
   }
 
-  void addProduct(Product product) async {
+  Future<bool> addProduct(Product product) async {
     try {
       final result = await post(
         Uri.parse('${apiUrl.baseUrl}/products.json'),
@@ -69,6 +71,8 @@ class ProductList with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+    } finally {
+      return true;
     }
   }
 
