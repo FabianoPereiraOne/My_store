@@ -44,36 +44,31 @@ class ProductList with ChangeNotifier {
   }
 
   Future<bool> addProduct(Product product) async {
-    try {
-      final result = await post(
-        Uri.parse('${apiUrl.baseUrl}/products.json'),
-        body: jsonEncode({
-          'name': product.title,
-          'description': product.description,
-          'price': product.price,
-          'imageUrl': product.imageUrl,
-          "isFavorite": product.isFavorite,
-        }),
-      );
+    final result = await post(
+      Uri.parse('${apiUrl.baseUrl}/products.json'),
+      body: jsonEncode({
+        'name': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        "isFavorite": product.isFavorite,
+      }),
+    );
 
-      final id = jsonDecode(result.body)['name'];
+    final id = jsonDecode(result.body)['name'];
 
-      _items.add(
-        Product(
-          description: product.description,
-          id: id,
-          imageUrl: product.imageUrl,
-          price: product.price,
-          title: product.title,
-          isFavorite: product.isFavorite,
-        ),
-      );
-      notifyListeners();
-    } catch (e) {
-      print(e);
-    } finally {
-      return true;
-    }
+    _items.add(
+      Product(
+        description: product.description,
+        id: id,
+        imageUrl: product.imageUrl,
+        price: product.price,
+        title: product.title,
+        isFavorite: product.isFavorite,
+      ),
+    );
+    notifyListeners();
+    return true;
   }
 
   int get itemsCount {
