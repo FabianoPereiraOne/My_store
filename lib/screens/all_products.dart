@@ -3,6 +3,7 @@ import 'package:my_store/components/appDrawer.dart';
 import 'package:my_store/components/badge_Item.dart';
 import 'package:my_store/components/product_grid.dart';
 import 'package:my_store/models/cart.dart';
+import 'package:my_store/models/product_list.dart';
 import 'package:my_store/utils/routes.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,19 @@ class AllProducts extends StatefulWidget {
 
 class _AllProductsState extends State<AllProducts> {
   bool showFavoriteOnly = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProductList>(context, listen: false).loadProducts().then((
+      param,
+    ) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +84,9 @@ class _AllProductsState extends State<AllProducts> {
       ),
       body: Container(
         margin: EdgeInsets.only(top: 8),
-        child: ProductGrid(showFavoriteOnly),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ProductGrid(showFavoriteOnly),
       ),
       drawer: AppDrawer(),
     );

@@ -3,16 +3,49 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:my_store/data/database.dart';
 import 'package:my_store/models/product.dart';
 import 'package:my_store/utils/api.dart';
 
 class ProductList with ChangeNotifier {
-  final List<Product> _items = dummyProducts;
+  final List<Product> _items = [];
 
   List<Product> get items => [..._items];
   List<Product> get favoriteItems =>
       _items.where((prod) => prod.isFavorite).toList();
+
+  Future<void> loadProducts() async {
+    try {
+      final result = await get(Uri.parse('${apiUrl.baseUrl}/products.json'));
+
+      if (result.body == "null") return;
+
+      final data = jsonDecode(result.body) as Map<String, dynamic>;
+
+      final List<Product> loadedProducts = [];
+
+      data.forEach((productId, productData) {
+        debugPrint(productData['name']);
+        loadedProducts.add(
+          Product(
+            id: productId,
+            title: productData['name'],
+            description: productData['description'],
+            price: productData['price'] is double
+                ? productData['price']
+                : double.tryParse(productData['price'].toString()),
+            imageUrl: productData['imageUrl'],
+            isFavorite: productData['isFavorite'],
+          ),
+        );
+      });
+
+      _items.clear();
+      _items.addAll(loadedProducts);
+      notifyListeners();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 
   Future<bool> saveProduct(Map<String, Object> data) {
     bool hasId = data['id'] != null;
