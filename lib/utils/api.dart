@@ -1,3 +1,3 @@
 class apiUrl {
-  static const baseUrl = "https://gvp-products-default-rtdb.firebaseio.com/";
+  static const baseUrl = "https://gvp-products-default-rtdb.firebaseio.com";
 }

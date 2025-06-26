@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_store/data/database.dart';
 import 'package:my_store/models/product.dart';
 
-class ProductList with ChangeNotifier {
+class ProductListOld with ChangeNotifier {
   final List<Product> _items = dummyProducts;
   bool onlyFavorites = false;
 
