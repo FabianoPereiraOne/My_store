@@ -10,6 +10,8 @@ class ProductController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final alert = ScaffoldMessenger.of(context);
+
     return ListTile(
       title: Text(product.title),
       leading: CircleAvatar(backgroundImage: NetworkImage(product.imageUrl)),
@@ -53,10 +55,14 @@ class ProductController extends StatelessWidget {
 
                 if (!confirm) return;
 
-                Provider.of<ProductList>(
-                  context,
-                  listen: false,
-                ).removeProduct(product);
+                try {
+                  Provider.of<ProductList>(
+                    context,
+                    listen: false,
+                  ).removeProduct(product);
+                } catch (error) {
+                  alert.showSnackBar(SnackBar(content: Text(error.toString())));
+                }
               },
               icon: Icon(Icons.delete),
             ),
